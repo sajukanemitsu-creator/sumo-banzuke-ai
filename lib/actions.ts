@@ -55,6 +55,82 @@ export async function getRikishiHistory(rikishiName: string): Promise<BanzukeRow
   return (data ?? []) as BanzukeRow[];
 }
 
+// ─── 勝敗・優勝者データ ────────────────────────────────────────────────────
+
+export type TorikumiEntry = {
+  day: number;
+  matchNo: number;
+  eastId: number;
+  eastShikona: string;
+  westId: number;
+  westShikona: string;
+  kimarite: string | null;
+  winnerId: number | null;
+};
+
+export type YushoEntry = {
+  type: string;
+  rikishiId: number;
+  shikonaEn: string;
+  shikonaJp: string;
+};
+
+export type SanshoEntry = {
+  type: string;
+  rikishiId: number;
+  shikonaEn: string;
+  shikonaJp: string;
+};
+
+export type BashoResultsData = {
+  yusho: YushoEntry[];
+  specialPrizes: SanshoEntry[];
+  torikumi: TorikumiEntry[];
+};
+
+const API_HEADERS = { "User-Agent": "sumo-banzuke-ai/1.0 (educational)" };
+
+export async function getBashoResults(basho: string, division: string): Promise<BashoResultsData> {
+  // 全15日を並列取得
+  const dayResults = await Promise.all(
+    Array.from({ length: 15 }, (_, i) => i + 1).map(async (day) => {
+      try {
+        const r = await fetch(
+          `https://sumo-api.com/api/basho/${basho}/torikumi/${division}/${day}`,
+          { headers: API_HEADERS, next: { revalidate: 86400 } }
+        );
+        if (!r.ok) return null;
+        return await r.json();
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  const firstValid = dayResults.find((d) => d !== null);
+  const yusho: YushoEntry[] = firstValid?.yusho ?? [];
+  const specialPrizes: SanshoEntry[] = firstValid?.specialPrizes ?? [];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const torikumi: TorikumiEntry[] = dayResults
+    .filter(Boolean)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .flatMap((d: any) => d.torikumi ?? [])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map((b: any) => ({
+      day: b.day,
+      matchNo: b.matchNo,
+      eastId: b.eastId,
+      eastShikona: b.eastShikona,
+      westId: b.westId,
+      westShikona: b.westShikona,
+      kimarite: b.kimarite ?? null,
+      winnerId: b.winnerId ?? null,
+    }));
+
+  return { yusho, specialPrizes, torikumi };
+}
+
 export async function getAvailableBashos(): Promise<string[]> {
   const supabase = getServerClient();
   const { data, error } = await supabase

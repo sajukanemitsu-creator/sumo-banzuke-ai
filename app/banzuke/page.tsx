@@ -2,6 +2,7 @@ import { getBanzuke } from "@/lib/actions";
 import { BanzukeRow, bashoLabel, DIVISIONS, BASHO_MONTHS, MONTH_NAMES } from "@/lib/utils";
 import BanzukeTable from "@/components/BanzukeTable";
 import BanzukeSearch from "@/components/BanzukeSearch";
+import BashoResults from "@/components/BashoResults";
 
 type Props = {
   searchParams: Promise<{ basho?: string; div?: string }>;
@@ -66,6 +67,7 @@ export default async function BanzukePage({ searchParams }: Props) {
             <div className="flex-1 h-px bg-[#c0392b]/30" />
           </div>
           <BanzukeTable rows={rows} />
+          <BashoResults basho={searched} division={currentDiv} rows={rows} />
         </div>
       )}
     </div>
