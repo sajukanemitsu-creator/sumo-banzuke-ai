@@ -23,19 +23,13 @@ function getConfidence(
   return Math.min(90, Math.round(62 + winRate * 20));
 }
 
-function MovementBadge({
-  movement,
-  side,
-}: {
-  movement: Movement;
-  side: "East" | "West";
-}) {
+function MovementBadge({ movement, side }: { movement: Movement; side: "East" | "West" }) {
   const color = side === "East" ? "#c0392b" : "#1e3768";
   if (movement === "promoted") {
     return (
       <span
-        className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium border"
-        style={{ color, borderColor: color, background: `${color}15` }}
+        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium border"
+        style={{ color, borderColor: color, background: `${color}12` }}
       >
         ∧ 昇進
       </span>
@@ -43,13 +37,13 @@ function MovementBadge({
   }
   if (movement === "demoted") {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium border border-stone-300 text-stone-400 bg-stone-50">
+      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium border border-stone-300 text-stone-400 bg-stone-50">
         ∨ 降格
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium border border-stone-300 text-stone-400 bg-stone-50">
+    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium border border-stone-300 text-stone-400 bg-stone-50">
       — 据置
     </span>
   );
@@ -68,29 +62,42 @@ function EastCard({
   const conf = getConfidence(wl, movement);
   const wins = wl?.wins ?? null;
   const losses = wl?.losses ?? null;
+  const kyujo = wins !== null && losses !== null ? Math.max(0, 15 - wins - losses) : null;
   const winPct = wins !== null ? Math.round((wins / 15) * 100) : null;
 
   return (
     <div
-      className="bg-white rounded-lg border border-stone-200 p-4 overflow-hidden"
-      style={{ borderLeft: "4px solid #c0392b" }}
+      className="bg-white rounded-lg border border-stone-200 py-2 px-3 overflow-hidden"
+      style={{ borderLeft: "3px solid #c0392b" }}
     >
-      <div className="text-xs text-[#1a1008]/40 mb-1">{rankLabel(row)}</div>
+      {/* Rank + Name */}
+      <div className="flex items-baseline gap-1.5 mb-1">
+        <span className="text-[10px] text-[#1a1008]/40 shrink-0">{rankLabel(row)}</span>
+      </div>
       <Link
         href={`/rikishi/${encodeURIComponent(row.rikishi_name)}`}
-        className="text-lg font-bold tracking-wider hover:text-[#c0392b] transition-colors block mb-3 leading-tight"
+        className="text-base font-bold tracking-wider hover:text-[#c0392b] transition-colors block leading-tight mb-1.5"
       >
         {displayName(row)}
       </Link>
+
+      {/* 前場所成績 */}
       {wins !== null && losses !== null ? (
         <>
-          <div className="flex items-baseline gap-1 mb-2 text-sm">
-            <span className="text-[#c0392b] font-bold text-xl leading-none">{wins}</span>
-            <span className="text-[#1a1008]/40 text-xs">勝</span>
-            <span className="text-[#1a1008]/60 font-medium ml-1 text-base leading-none">{losses}</span>
-            <span className="text-[#1a1008]/40 text-xs">敗</span>
+          <div className="text-[10px] text-[#1a1008]/40 mb-0.5">前場所成績</div>
+          <div className="flex items-center gap-1 mb-1.5">
+            <span className="text-[#c0392b] font-bold text-sm">{wins}</span>
+            <span className="text-[#1a1008]/40 text-[10px]">勝</span>
+            <span className="text-[#1a1008]/60 font-medium text-sm">{losses}</span>
+            <span className="text-[#1a1008]/40 text-[10px]">敗</span>
+            {kyujo !== null && kyujo > 0 && (
+              <>
+                <span className="text-stone-400 font-medium text-sm">{kyujo}</span>
+                <span className="text-stone-400 text-[10px]">休</span>
+              </>
+            )}
           </div>
-          <div className="h-1.5 bg-stone-200 rounded-full overflow-hidden mb-3">
+          <div className="h-1 bg-stone-200 rounded-full overflow-hidden mb-1.5">
             <div
               className="h-full bg-[#c0392b] rounded-full"
               style={{ width: `${winPct}%` }}
@@ -98,11 +105,13 @@ function EastCard({
           </div>
         </>
       ) : (
-        <div className="h-10 mb-3" />
+        <div className="h-6 mb-1.5" />
       )}
-      <div className="flex items-center gap-2">
+
+      {/* Badge + Confidence */}
+      <div className="flex items-center justify-between">
         <MovementBadge movement={movement} side="East" />
-        <span className="text-xs text-[#1a1008]/40 ml-auto">確度 {conf}%</span>
+        <span className="text-[10px] text-[#1a1008]/40">確度 {conf}%</span>
       </div>
     </div>
   );
@@ -121,29 +130,42 @@ function WestCard({
   const conf = getConfidence(wl, movement);
   const wins = wl?.wins ?? null;
   const losses = wl?.losses ?? null;
+  const kyujo = wins !== null && losses !== null ? Math.max(0, 15 - wins - losses) : null;
   const winPct = wins !== null ? Math.round((wins / 15) * 100) : null;
 
   return (
     <div
-      className="bg-white rounded-lg border border-stone-200 p-4 overflow-hidden"
-      style={{ borderRight: "4px solid #1e3768" }}
+      className="bg-white rounded-lg border border-stone-200 py-2 px-3 overflow-hidden"
+      style={{ borderRight: "3px solid #1e3768" }}
     >
-      <div className="text-xs text-[#1a1008]/40 mb-1 text-right">{rankLabel(row)}</div>
+      {/* Rank + Name */}
+      <div className="flex items-baseline justify-end gap-1.5 mb-1">
+        <span className="text-[10px] text-[#1a1008]/40 shrink-0">{rankLabel(row)}</span>
+      </div>
       <Link
         href={`/rikishi/${encodeURIComponent(row.rikishi_name)}`}
-        className="text-lg font-bold tracking-wider hover:text-[#1e3768] transition-colors block mb-3 text-right leading-tight"
+        className="text-base font-bold tracking-wider hover:text-[#1e3768] transition-colors block text-right leading-tight mb-1.5"
       >
         {displayName(row)}
       </Link>
+
+      {/* 前場所成績 (reversed for West) */}
       {wins !== null && losses !== null ? (
         <>
-          <div className="flex items-baseline gap-1 mb-2 text-sm justify-end">
-            <span className="text-[#1a1008]/40 text-xs">敗</span>
-            <span className="text-[#1a1008]/60 font-medium text-base leading-none">{losses}</span>
-            <span className="text-[#1a1008]/40 text-xs ml-1">勝</span>
-            <span className="text-[#1e3768] font-bold text-xl leading-none">{wins}</span>
+          <div className="text-[10px] text-[#1a1008]/40 mb-0.5 text-right">前場所成績</div>
+          <div className="flex items-center gap-1 mb-1.5 justify-end">
+            {kyujo !== null && kyujo > 0 && (
+              <>
+                <span className="text-stone-400 font-medium text-sm">{kyujo}</span>
+                <span className="text-stone-400 text-[10px]">休</span>
+              </>
+            )}
+            <span className="text-[#1a1008]/40 text-[10px]">敗</span>
+            <span className="text-[#1a1008]/60 font-medium text-sm">{losses}</span>
+            <span className="text-[#1a1008]/40 text-[10px]">勝</span>
+            <span className="text-[#1e3768] font-bold text-sm">{wins}</span>
           </div>
-          <div className="h-1.5 bg-stone-200 rounded-full overflow-hidden mb-3 flex justify-end">
+          <div className="h-1 bg-stone-200 rounded-full overflow-hidden mb-1.5 flex justify-end">
             <div
               className="h-full rounded-full"
               style={{ width: `${winPct}%`, background: "#1e3768" }}
@@ -151,11 +173,13 @@ function WestCard({
           </div>
         </>
       ) : (
-        <div className="h-10 mb-3" />
+        <div className="h-6 mb-1.5" />
       )}
-      <div className="flex items-center gap-2 flex-row-reverse">
+
+      {/* Badge + Confidence */}
+      <div className="flex items-center justify-between flex-row-reverse">
         <MovementBadge movement={movement} side="West" />
-        <span className="text-xs text-[#1a1008]/40 mr-auto">確度 {conf}%</span>
+        <span className="text-[10px] text-[#1a1008]/40">確度 {conf}%</span>
       </div>
     </div>
   );
@@ -163,11 +187,11 @@ function WestCard({
 
 type Props = {
   rows: BanzukeRow[];
-  prevRankMap: Map<string, BanzukeRow>;
+  prevRankObj: Record<string, BanzukeRow>;
   winLoss: WinLoss;
 };
 
-export default function BanzukeCards({ rows, prevRankMap, winLoss }: Props) {
+export default function BanzukeCards({ rows, prevRankObj, winLoss }: Props) {
   const grouped: Record<string, { east: BanzukeRow[]; west: BanzukeRow[] }> = {};
   for (const r of rows) {
     if (!grouped[r.rank]) grouped[r.rank] = { east: [], west: [] };
@@ -180,15 +204,14 @@ export default function BanzukeCards({ rows, prevRankMap, winLoss }: Props) {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {rankOrder.map((rank) => {
         const { east, west } = grouped[rank];
         const maxRows = Math.max(east.length, west.length);
 
         return (
           <div key={rank}>
-            {/* Rank separator */}
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center gap-4 mb-3">
               <div className="flex-1 h-px bg-stone-300" />
               <span className="text-sm font-bold tracking-[0.4em] text-[#1a1008]/50 px-2">
                 {(RANK_JA[rank] ?? rank).split("").join("　")}
@@ -196,18 +219,17 @@ export default function BanzukeCards({ rows, prevRankMap, winLoss }: Props) {
               <div className="flex-1 h-px bg-stone-300" />
             </div>
 
-            {/* Card pairs */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               {Array.from({ length: maxRows }).map((_, i) => {
                 const eR = east[i];
                 const wR = west[i];
                 return (
-                  <div key={i} className="grid grid-cols-2 gap-3">
+                  <div key={i} className="grid grid-cols-2 gap-2">
                     <div>
                       {eR ? (
                         <EastCard
                           row={eR}
-                          prev={prevRankMap.get(eR.rikishi_name)}
+                          prev={prevRankObj[eR.rikishi_name]}
                           wl={winLoss[eR.rikishi_name]}
                         />
                       ) : (
@@ -218,7 +240,7 @@ export default function BanzukeCards({ rows, prevRankMap, winLoss }: Props) {
                       {wR ? (
                         <WestCard
                           row={wR}
-                          prev={prevRankMap.get(wR.rikishi_name)}
+                          prev={prevRankObj[wR.rikishi_name]}
                           wl={winLoss[wR.rikishi_name]}
                         />
                       ) : (
