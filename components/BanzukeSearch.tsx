@@ -9,7 +9,7 @@ const END_YEAR   = 2026;
 const YEARS = Array.from({ length: END_YEAR - START_YEAR + 1 }, (_, i) => END_YEAR - i);
 
 const SELECT_CLASS =
-  "w-full px-3 py-2 border border-stone-300 rounded bg-[#f7f0e3] text-sm " +
+  "w-full px-3 py-2 border border-stone-200 rounded-lg bg-white text-sm " +
   "focus:outline-none focus:border-[#c0392b] focus:ring-1 focus:ring-[#c0392b]/30 " +
   "appearance-none cursor-pointer";
 
@@ -33,7 +33,7 @@ export default function BanzukeSearch({ currentBasho, currentDiv }: Props) {
   }
 
   return (
-    <div className="bg-white/50 rounded-xl border border-stone-200 p-5 shadow-sm">
+    <div className="bg-white rounded-xl border border-stone-200 p-5 shadow-sm">
       <div className="flex flex-wrap gap-4 items-end justify-center">
 
         {/* 年 */}
@@ -90,8 +90,8 @@ export default function BanzukeSearch({ currentBasho, currentDiv }: Props) {
         {/* 検索ボタン */}
         <button
           onClick={handleSearch}
-          className="px-7 py-2 bg-[#c0392b] text-white text-sm rounded hover:bg-[#a93226]
-                     transition-colors tracking-widest font-bold self-end"
+          className="px-7 py-2 bg-[#c0392b] text-white text-sm rounded-lg hover:bg-[#a93226]
+                     transition-colors tracking-widest font-bold self-end shadow-sm"
         >
           検索
         </button>

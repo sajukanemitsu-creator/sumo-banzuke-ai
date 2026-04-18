@@ -285,6 +285,34 @@ export async function getRikishiWinLoss(rikishiName: string): Promise<BashoWinLo
   return result;
 }
 
+// ─── 特定場所の全力士勝敗一括取得 ────────────────────────────────────────────
+
+export async function getBashoAllWinLoss(
+  basho: string
+): Promise<Record<string, { wins: number; losses: number }>> {
+  const supabase = getServerClient();
+  const { data, error } = await supabase
+    .from("torikumi")
+    .select("east_name, west_name, winner")
+    .eq("basho", basho);
+
+  if (error || !data) return {};
+
+  const result: Record<string, { wins: number; losses: number }> = {};
+  for (const b of data) {
+    if (!result[b.east_name]) result[b.east_name] = { wins: 0, losses: 0 };
+    if (!result[b.west_name]) result[b.west_name] = { wins: 0, losses: 0 };
+    if (b.winner === "East") {
+      result[b.east_name].wins++;
+      result[b.west_name].losses++;
+    } else if (b.winner === "West") {
+      result[b.west_name].wins++;
+      result[b.east_name].losses++;
+    }
+  }
+  return result;
+}
+
 export async function getAvailableBashos(): Promise<string[]> {
   const supabase = getServerClient();
   const { data, error } = await supabase

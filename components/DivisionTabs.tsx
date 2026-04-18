@@ -26,10 +26,10 @@ export default function DivisionTabs({ currentDiv, basePath, basho }: Props) {
           key={key}
           onClick={() => handleChange(key)}
           className={`
-            px-3 py-1.5 text-sm rounded border transition-all tracking-wider
+            px-4 py-2 text-xs rounded-lg border transition-all tracking-wider
             ${currentDiv === key
-              ? "bg-[#c0392b] text-white border-[#c0392b] font-bold"
-              : "bg-white/50 text-[#1a1008]/60 border-stone-300 hover:border-[#c0392b] hover:text-[#c0392b]"
+              ? "bg-[#c0392b] text-white border-[#c0392b] font-bold shadow-sm"
+              : "bg-white text-[#1a1008]/50 border-stone-200 hover:border-[#c0392b]/50 hover:text-[#c0392b]"
             }
           `}
         >
