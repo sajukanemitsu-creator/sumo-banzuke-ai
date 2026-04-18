@@ -108,10 +108,12 @@ function EastCard({
         <div className="h-6 mb-1.5" />
       )}
 
-      {/* Badge + Confidence */}
+      {/* Badge + Confidence（確度は平幕のみ） */}
       <div className="flex items-center justify-between">
         <MovementBadge movement={movement} side="East" />
-        <span className="text-[10px] text-[#1a1008]/40">確度 {conf}%</span>
+        {row.rank === "Maegashira" && (
+          <span className="text-[10px] text-[#1a1008]/40">確度 {conf}%</span>
+        )}
       </div>
     </div>
   );
@@ -176,10 +178,12 @@ function WestCard({
         <div className="h-6 mb-1.5" />
       )}
 
-      {/* Badge + Confidence */}
+      {/* Badge + Confidence（確度は平幕のみ） */}
       <div className="flex items-center justify-between flex-row-reverse">
         <MovementBadge movement={movement} side="West" />
-        <span className="text-[10px] text-[#1a1008]/40">確度 {conf}%</span>
+        {row.rank === "Maegashira" && (
+          <span className="text-[10px] text-[#1a1008]/40">確度 {conf}%</span>
+        )}
       </div>
     </div>
   );

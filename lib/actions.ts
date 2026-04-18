@@ -28,7 +28,8 @@ export async function getBanzuke(basho: string, division = "Makuuchi"): Promise<
     .select("*")
     .eq("basho", basho)
     .eq("division", division)
-    .order("rank_number", { ascending: true });
+    .order("rank_number", { ascending: true })
+    .order("id", { ascending: false }); // 新しいデータを優先（重複排除用）
 
   if (error) throw new Error(error.message);
 

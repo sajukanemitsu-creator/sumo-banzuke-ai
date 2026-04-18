@@ -3,7 +3,7 @@ import { BanzukeRow, DIVISIONS, rankValue, rankLabel, displayName } from "@/lib/
 import HomeClient from "@/components/HomeClient";
 
 const PREDICTED_BASHO = "202605";
-export const revalidate = 3600;
+export const revalidate = 300;
 
 const VENUES: Record<string, string> = {
   "01": "両国国技館",   "03": "大阪府立体育会館",
@@ -91,6 +91,8 @@ export default async function HomePage({
   };
   const notableMovements: Notable[] = rows
     .map((r) => {
+      // 確度%は平幕の昇降のみ対象
+      if (r.rank !== "Maegashira") return null;
       const prev = prevRankObj[r.rikishi_name];
       if (!prev) return null;
       const diff = rankValue(prev) - rankValue(r);
