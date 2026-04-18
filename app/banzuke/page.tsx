@@ -66,7 +66,7 @@ export default async function BanzukePage({ searchParams }: Props) {
             <span className="text-[#c0392b]/60 text-sm">◉</span>
             <div className="flex-1 h-px bg-[#c0392b]/30" />
           </div>
-          <BanzukeTable rows={rows} />
+          <BanzukeTable rows={rows} basho={searched} division={currentDiv} />
           <BashoResults basho={searched} division={currentDiv} rows={rows} />
         </div>
       )}

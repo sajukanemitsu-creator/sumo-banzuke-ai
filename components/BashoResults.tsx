@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import { getBashoResults, BashoResultsData } from "@/lib/actions";
 import { BanzukeRow, RANK_ORDER, DIVISIONS, displayName } from "@/lib/utils";
 
+const UPPER_DIVS = new Set(["Makuuchi", "Juryo"]);
+
 const SANSHO_LABELS: Record<string, string> = {
   "Shukun-sho": "殊勲賞",
   "Kanto-sho":  "敢闘賞",
@@ -194,7 +196,14 @@ export default function BashoResults({ basho, division, rows }: Props) {
                           {days.map((day) => {
                             const bout = bouts.get(day);
                             if (!bout) {
-                              return <td key={day} className="px-1 py-1 text-center text-stone-200 group-hover:bg-stone-50/50">—</td>;
+                              const isKyujo = UPPER_DIVS.has(division);
+                              return (
+                                <td key={day} className="px-1 py-1 text-center group-hover:bg-stone-50/50">
+                                  {isKyujo
+                                    ? <span className="text-stone-300 text-[10px]">休</span>
+                                    : <span className="text-stone-200 text-[10px]">—</span>}
+                                </td>
+                              );
                             }
                             const isWin = bout.result === "win";
                             const oppName = nameMap.get(bout.opponent) ?? bout.opponent;
