@@ -1,4 +1,4 @@
-import { getBanzuke, getAvailableBashos, getBashoAllWinLoss } from "@/lib/actions";
+import { getBanzuke, getAvailableBashos, getBashoWinLossByDiv } from "@/lib/actions";
 import { BanzukeRow, DIVISIONS, rankValue, rankLabel, displayName } from "@/lib/utils";
 import HomeClient from "@/components/HomeClient";
 
@@ -63,7 +63,7 @@ export default async function HomePage({
       ? getBanzuke(prevBasho, currentDiv).catch(() => [] as BanzukeRow[])
       : Promise.resolve([] as BanzukeRow[]),
     prevBasho
-      ? getBashoAllWinLoss(prevBasho).catch(() => ({} as Record<string, { wins: number; losses: number }>))
+      ? getBashoWinLossByDiv(prevBasho, currentDiv).catch(() => ({} as Record<string, { wins: number; losses: number }>))
       : Promise.resolve({} as Record<string, { wins: number; losses: number }>),
   ]);
 

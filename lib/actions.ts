@@ -314,6 +314,43 @@ export async function getBashoAllWinLoss(
   return result;
 }
 
+/**
+ * 特定場所・階級の全力士勝敗を取得。
+ * 幕内 → Supabase torikumi から、下位階級 → sumo-api.com から取得。
+ */
+export async function getBashoWinLossByDiv(
+  basho: string,
+  division: string
+): Promise<Record<string, { wins: number; losses: number }>> {
+  if (division === "Makuuchi") {
+    return getBashoAllWinLoss(basho);
+  }
+  // 下位階級: sumo-api.com の番付エンドポイントに wins/losses が含まれる
+  try {
+    const resp = await fetch(
+      `https://sumo-api.com/api/basho/${basho}/banzuke/${division}`,
+      { headers: API_HEADERS, next: { revalidate: 86400 * 7 } }
+    );
+    if (!resp.ok) return {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = await resp.json();
+    const result: Record<string, { wins: number; losses: number }> = {};
+    for (const side of ["east", "west"]) {
+      for (const r of data[side] ?? []) {
+        if (r.shikonaEn) {
+          result[r.shikonaEn] = {
+            wins:   r.wins   ?? 0,
+            losses: r.losses ?? 0,
+          };
+        }
+      }
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
+
 // ─── 成績分析データ ────────────────────────────────────────────────────────────
 
 export async function getWinsDistribution(

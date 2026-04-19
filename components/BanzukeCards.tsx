@@ -81,6 +81,11 @@ function EastCard({
         {displayName(row)}
       </Link>
 
+      {/* 前場所番付 */}
+      {prev && (
+        <div className="text-[9px] text-[#1a1008]/30 mb-0.5">前: {rankLabel(prev)}</div>
+      )}
+
       {/* 前場所成績 */}
       {wins !== null && losses !== null ? (
         <>
@@ -151,21 +156,26 @@ function WestCard({
         {displayName(row)}
       </Link>
 
-      {/* 前場所成績 (reversed for West) */}
+      {/* 前場所番付 */}
+      {prev && (
+        <div className="text-[9px] text-[#1a1008]/30 mb-0.5 text-right">前: {rankLabel(prev)}</div>
+      )}
+
+      {/* 前場所成績（西: 左から勝・敗・休の順） */}
       {wins !== null && losses !== null ? (
         <>
           <div className="text-[10px] text-[#1a1008]/40 mb-0.5 text-right">前場所成績</div>
           <div className="flex items-center gap-1 mb-1.5 justify-end">
+            <span className="text-[#1e3768] font-bold text-sm">{wins}</span>
+            <span className="text-[#1a1008]/40 text-[10px]">勝</span>
+            <span className="text-[#1a1008]/60 font-medium text-sm">{losses}</span>
+            <span className="text-[#1a1008]/40 text-[10px]">敗</span>
             {kyujo !== null && kyujo > 0 && (
               <>
                 <span className="text-stone-400 font-medium text-sm">{kyujo}</span>
                 <span className="text-stone-400 text-[10px]">休</span>
               </>
             )}
-            <span className="text-[#1a1008]/40 text-[10px]">敗</span>
-            <span className="text-[#1a1008]/60 font-medium text-sm">{losses}</span>
-            <span className="text-[#1a1008]/40 text-[10px]">勝</span>
-            <span className="text-[#1e3768] font-bold text-sm">{wins}</span>
           </div>
           <div className="h-1 bg-stone-200 rounded-full overflow-hidden mb-1.5 flex justify-end">
             <div
