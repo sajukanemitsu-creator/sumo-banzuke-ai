@@ -77,7 +77,7 @@ function EastCard({
     >
       <Link
         href={`/rikishi/${encodeURIComponent(row.rikishi_name)}`}
-        className="text-base font-bold tracking-wider hover:text-[#c0392b] transition-colors block leading-tight mb-1"
+        className="font-sumo text-base font-bold tracking-wider hover:text-[#c0392b] transition-colors block leading-tight mb-1"
       >
         {displayName(row)}
       </Link>
@@ -152,7 +152,7 @@ function WestCard({
     >
       <Link
         href={`/rikishi/${encodeURIComponent(row.rikishi_name)}`}
-        className="text-base font-bold tracking-wider hover:text-[#1e3768] transition-colors block text-right leading-tight mb-1"
+        className="font-sumo text-base font-bold tracking-wider hover:text-[#1e3768] transition-colors block text-right leading-tight mb-1"
       >
         {displayName(row)}
       </Link>

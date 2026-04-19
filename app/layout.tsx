@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { Noto_Serif_JP } from "next/font/google";
+import { Noto_Serif_JP, Yuji_Syuku } from "next/font/google";
 import "./globals.css";
 
 const notoSerifJP = Noto_Serif_JP({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-noto-serif-jp",
+  display: "swap",
+});
+
+const yujiSyuku = Yuji_Syuku({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-yuji-syuku",
   display: "swap",
 });
 
@@ -20,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja" className={`${notoSerifJP.variable} h-full`}>
+    <html lang="ja" className={`${notoSerifJP.variable} ${yujiSyuku.variable} h-full`}>
       <body
         className="min-h-full flex flex-col text-[#1a1008]"
         style={{
