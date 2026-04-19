@@ -1,14 +1,14 @@
 import Link from "next/link";
-import { BanzukeRow, RANK_ORDER, RANK_JA, rankLabel, rankValue, displayName } from "@/lib/utils";
+import { BanzukeRow, RANK_ORDER, RANK_JA, rankLabel, rankValue, rankCenterLabel, displayName } from "@/lib/utils";
 
-type WinLoss = Record<string, { wins: number; losses: number }>;
+type WinLoss = Record<string, { wins: number; losses: number; absences?: number }>;
 type Movement = "promoted" | "demoted" | "same";
 
 function getMovement(predicted: BanzukeRow, prev: BanzukeRow | undefined): Movement {
   if (!prev) return "same";
   const diff = rankValue(prev) - rankValue(predicted);
-  if (diff > 200) return "promoted";
-  if (diff < -200) return "demoted";
+  if (diff > 1) return "promoted";
+  if (diff < -1) return "demoted";
   return "same";
 }
 
@@ -56,27 +56,28 @@ function EastCard({
 }: {
   row: BanzukeRow;
   prev?: BanzukeRow;
-  wl?: { wins: number; losses: number };
+  wl?: { wins: number; losses: number; absences?: number };
 }) {
   const movement = getMovement(row, prev);
   const conf = getConfidence(wl, movement);
   const wins = wl?.wins ?? null;
   const losses = wl?.losses ?? null;
-  const kyujo = wins !== null && losses !== null ? Math.max(0, 15 - wins - losses) : null;
-  const winPct = wins !== null ? Math.round((wins / 15) * 100) : null;
+  const is7bout = !["Makuuchi", "Juryo"].includes(row.division);
+  const maxBouts = is7bout ? 7 : 15;
+  // 幕下以下: 実際の休場数のみ表示（対戦なし日は休ではない）
+  const kyujo = wins !== null && losses !== null
+    ? (is7bout ? (wl?.absences ?? 0) : Math.max(0, maxBouts - wins - losses))
+    : null;
+  const winPct = wins !== null ? Math.round((wins / maxBouts) * 100) : null;
 
   return (
     <div
       className="bg-white rounded-lg border border-stone-200 py-2 px-3 overflow-hidden"
       style={{ borderLeft: "3px solid #c0392b" }}
     >
-      {/* Rank + Name */}
-      <div className="flex items-baseline gap-1.5 mb-1">
-        <span className="text-[10px] text-[#1a1008]/40 shrink-0">{rankLabel(row)}</span>
-      </div>
       <Link
         href={`/rikishi/${encodeURIComponent(row.rikishi_name)}`}
-        className="text-base font-bold tracking-wider hover:text-[#c0392b] transition-colors block leading-tight mb-1.5"
+        className="text-base font-bold tracking-wider hover:text-[#c0392b] transition-colors block leading-tight mb-1"
       >
         {displayName(row)}
       </Link>
@@ -131,27 +132,27 @@ function WestCard({
 }: {
   row: BanzukeRow;
   prev?: BanzukeRow;
-  wl?: { wins: number; losses: number };
+  wl?: { wins: number; losses: number; absences?: number };
 }) {
   const movement = getMovement(row, prev);
   const conf = getConfidence(wl, movement);
   const wins = wl?.wins ?? null;
   const losses = wl?.losses ?? null;
-  const kyujo = wins !== null && losses !== null ? Math.max(0, 15 - wins - losses) : null;
-  const winPct = wins !== null ? Math.round((wins / 15) * 100) : null;
+  const is7bout = !["Makuuchi", "Juryo"].includes(row.division);
+  const maxBouts = is7bout ? 7 : 15;
+  const kyujo = wins !== null && losses !== null
+    ? (is7bout ? (wl?.absences ?? 0) : Math.max(0, maxBouts - wins - losses))
+    : null;
+  const winPct = wins !== null ? Math.round((wins / maxBouts) * 100) : null;
 
   return (
     <div
       className="bg-white rounded-lg border border-stone-200 py-2 px-3 overflow-hidden"
       style={{ borderRight: "3px solid #1e3768" }}
     >
-      {/* Rank + Name */}
-      <div className="flex items-baseline justify-end gap-1.5 mb-1">
-        <span className="text-[10px] text-[#1a1008]/40 shrink-0">{rankLabel(row)}</span>
-      </div>
       <Link
         href={`/rikishi/${encodeURIComponent(row.rikishi_name)}`}
-        className="text-base font-bold tracking-wider hover:text-[#1e3768] transition-colors block text-right leading-tight mb-1.5"
+        className="text-base font-bold tracking-wider hover:text-[#1e3768] transition-colors block text-right leading-tight mb-1"
       >
         {displayName(row)}
       </Link>
@@ -161,7 +162,7 @@ function WestCard({
         <div className="text-[9px] text-[#1a1008]/30 mb-0.5 text-right">前: {rankLabel(prev)}</div>
       )}
 
-      {/* 前場所成績（西: 左から勝・敗・休の順） */}
+      {/* 前場所成績 */}
       {wins !== null && losses !== null ? (
         <>
           <div className="text-[10px] text-[#1a1008]/40 mb-0.5 text-right">前場所成績</div>
@@ -225,6 +226,7 @@ export default function BanzukeCards({ rows, prevRankObj, winLoss }: Props) {
 
         return (
           <div key={rank}>
+            {/* ランクグループ区切り */}
             <div className="flex items-center gap-4 mb-3">
               <div className="flex-1 h-px bg-stone-300" />
               <span className="text-sm font-bold tracking-[0.4em] text-[#1a1008]/50 px-2">
@@ -237,8 +239,13 @@ export default function BanzukeCards({ rows, prevRankObj, winLoss }: Props) {
               {Array.from({ length: maxRows }).map((_, i) => {
                 const eR = east[i];
                 const wR = west[i];
+                const centerRank = eR?.rank ?? wR?.rank ?? rank;
+                const centerRankNum = eR?.rank_number ?? wR?.rank_number ?? 0;
                 return (
-                  <div key={i} className="grid grid-cols-2 gap-2">
+                  <div
+                    key={i}
+                    style={{ display: "grid", gridTemplateColumns: "1fr 44px 1fr", gap: "4px" }}
+                  >
                     <div>
                       {eR ? (
                         <EastCard
@@ -250,6 +257,17 @@ export default function BanzukeCards({ rows, prevRankObj, winLoss }: Props) {
                         <div />
                       )}
                     </div>
+
+                    {/* 中央: 番付名・枚数（縦書き） */}
+                    <div className="flex items-center justify-center">
+                      <span
+                        className="text-[11px] font-medium text-[#1a1008]/45 tracking-widest select-none"
+                        style={{ writingMode: "vertical-rl" }}
+                      >
+                        {rankCenterLabel(centerRank, centerRankNum)}
+                      </span>
+                    </div>
+
                     <div>
                       {wR ? (
                         <WestCard

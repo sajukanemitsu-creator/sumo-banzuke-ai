@@ -53,6 +53,22 @@ export function bashoLabel(basho: string): string {
   return `${year}年${MONTH_NAMES[month] ?? month + "月場所"}`;
 }
 
+export function toKanjiNum(n: number): string {
+  if (n <= 0) return "";
+  const ones = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+  if (n < 10) return ones[n];
+  const t = Math.floor(n / 10);
+  const o = n % 10;
+  return (t === 1 ? "十" : ones[t] + "十") + ones[o];
+}
+
+export function rankCenterLabel(rank: string, rankNum: number): string {
+  const ja = RANK_JA[rank] ?? rank;
+  if (["Yokozuna", "Ozeki", "Sekiwake", "Komusubi"].includes(rank)) return ja;
+  if (rankNum === 1) return `${ja}筆頭`;
+  return `${ja}${toKanjiNum(rankNum)}枚目`;
+}
+
 export function rankLabel(row: { rank: string; rank_number: number }): string {
   if (row.rank === "Maegashira") return `前頭${row.rank_number}枚目`;
   if (row.rank === "Juryo") return `十両${row.rank_number}枚目`;
@@ -67,5 +83,7 @@ export function rankValue(row: { rank: string; rank_number: number; side: string
 }
 
 export function displayName(row: BanzukeRow): string {
-  return row.rikishi_name_jp || row.rikishi_name;
+  const name = row.rikishi_name_jp || row.rikishi_name;
+  // 読み仮名を削除: "栃大海(とちたいかい)" → "栃大海"
+  return name.replace(/[（(][^）)]*[）)]/g, "").trim();
 }

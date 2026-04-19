@@ -1,4 +1,4 @@
-import { getBanzuke, getAvailableBashos, getBashoWinLossByDiv } from "@/lib/actions";
+import { getBanzuke, getAvailableBashos, getBashoWinLossByDiv, getBanzukeAllDivisions } from "@/lib/actions";
 import { BanzukeRow, DIVISIONS, rankValue, rankLabel, displayName } from "@/lib/utils";
 import HomeClient from "@/components/HomeClient";
 
@@ -17,17 +17,6 @@ const MONTH_JA: Record<string, string> = {
 
 function eraLabel(year: number): string {
   return `令和${year - 2018}年`;
-}
-
-function getMovementType(
-  predicted: BanzukeRow,
-  prev: BanzukeRow | undefined
-): "promoted" | "demoted" | "same" {
-  if (!prev) return "same";
-  const diff = rankValue(prev) - rankValue(predicted);
-  if (diff > 200) return "promoted";
-  if (diff < -200) return "demoted";
-  return "same";
 }
 
 function getConfidence(
@@ -59,15 +48,16 @@ export default async function HomePage({
   const prevBasho = allBashos.find((b) => b < PREDICTED_BASHO) ?? null;
 
   const [prevRows, prevWinLoss] = await Promise.all([
+    // 全階級から取得: 異なる段から来た力士の前場所番付も表示するため
     prevBasho
-      ? getBanzuke(prevBasho, currentDiv).catch(() => [] as BanzukeRow[])
+      ? getBanzukeAllDivisions(prevBasho).catch(() => [] as BanzukeRow[])
       : Promise.resolve([] as BanzukeRow[]),
     prevBasho
-      ? getBashoWinLossByDiv(prevBasho, currentDiv).catch(() => ({} as Record<string, { wins: number; losses: number }>))
-      : Promise.resolve({} as Record<string, { wins: number; losses: number }>),
+      ? getBashoWinLossByDiv(prevBasho, currentDiv).catch(() => ({} as Record<string, { wins: number; losses: number; absences: number }>))
+      : Promise.resolve({} as Record<string, { wins: number; losses: number; absences: number }>),
   ]);
 
-  // Map を JSON-serializable な Record に変換（Client Component に渡すため）
+  // rikishi_name をキーにした前場所番付 Map
   const prevRankObj: Record<string, BanzukeRow> = {};
   for (const r of prevRows) prevRankObj[r.rikishi_name] = r;
 
@@ -75,7 +65,7 @@ export default async function HomePage({
   const wrestlerCount = rows.length;
   const promotedCount = rows.filter((r) => {
     const prev = prevRankObj[r.rikishi_name];
-    return prev && rankValue(prev) - rankValue(r) > 200;
+    return prev && rankValue(prev) - rankValue(r) > 2;
   }).length;
   const topWrestler =
     rows.find((r) => r.rank === "Yokozuna" && r.side === "East") ??
@@ -91,7 +81,6 @@ export default async function HomePage({
   };
   const notableMovements: Notable[] = rows
     .map((r) => {
-      // 確度%は平幕の昇降のみ対象
       if (r.rank !== "Maegashira") return null;
       const prev = prevRankObj[r.rikishi_name];
       if (!prev) return null;

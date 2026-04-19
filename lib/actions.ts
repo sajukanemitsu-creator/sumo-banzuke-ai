@@ -321,11 +321,15 @@ export async function getBashoAllWinLoss(
 export async function getBashoWinLossByDiv(
   basho: string,
   division: string
-): Promise<Record<string, { wins: number; losses: number }>> {
+): Promise<Record<string, { wins: number; losses: number; absences: number }>> {
   if (division === "Makuuchi") {
-    return getBashoAllWinLoss(basho);
+    const base = await getBashoAllWinLoss(basho);
+    // absences を補完（15 - wins - losses）
+    return Object.fromEntries(
+      Object.entries(base).map(([k, v]) => [k, { ...v, absences: Math.max(0, 15 - v.wins - v.losses) }])
+    );
   }
-  // 下位階級: sumo-api.com の番付エンドポイントに wins/losses が含まれる
+  // 下位階級: sumo-api.com の番付エンドポイントに wins/losses/absences が含まれる
   try {
     const resp = await fetch(
       `https://sumo-api.com/api/basho/${basho}/banzuke/${division}`,
@@ -334,13 +338,15 @@ export async function getBashoWinLossByDiv(
     if (!resp.ok) return {};
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = await resp.json();
-    const result: Record<string, { wins: number; losses: number }> = {};
+    if (!data || typeof data !== "object") return {};
+    const result: Record<string, { wins: number; losses: number; absences: number }> = {};
     for (const side of ["east", "west"]) {
       for (const r of data[side] ?? []) {
         if (r.shikonaEn) {
           result[r.shikonaEn] = {
-            wins:   r.wins   ?? 0,
-            losses: r.losses ?? 0,
+            wins:     r.wins     ?? 0,
+            losses:   r.losses   ?? 0,
+            absences: r.absences ?? 0,
           };
         }
       }
@@ -349,6 +355,28 @@ export async function getBashoWinLossByDiv(
   } catch {
     return {};
   }
+}
+
+/**
+ * 特定場所の全階級番付を一括取得（前場所番付の cross-division 検索に使用）。
+ */
+export async function getBanzukeAllDivisions(basho: string): Promise<BanzukeRow[]> {
+  const supabase = getServerClient();
+  const { data, error } = await supabase
+    .from("banzuke")
+    .select("*")
+    .eq("basho", basho)
+    .order("id", { ascending: false }); // 新しいデータ優先
+
+  if (error) throw new Error(error.message);
+
+  // rikishi_name ごとに重複排除（最初＝最新を優先）
+  const seen = new Set<string>();
+  return (data ?? []).filter((r) => {
+    if (seen.has(r.rikishi_name)) return false;
+    seen.add(r.rikishi_name);
+    return true;
+  }) as BanzukeRow[];
 }
 
 // ─── 成績分析データ ────────────────────────────────────────────────────────────

@@ -28,7 +28,7 @@ type Notable = {
 type Props = {
   rows: BanzukeRow[];
   prevRankObj: Record<string, BanzukeRow>;
-  winLoss: Record<string, { wins: number; losses: number }>;
+  winLoss: Record<string, { wins: number; losses: number; absences?: number }>;
   notableMovements: Notable[];
   wrestlerCount: number;
   promotedCount: number;
@@ -53,7 +53,7 @@ const MONTH_JA: Record<string, string> = {
 function BanzukeTab({ rows, prevRankObj, winLoss, notableMovements, wrestlerCount, promotedCount, topCandidate, currentDiv, era, monthName }: {
   rows: BanzukeRow[];
   prevRankObj: Record<string, BanzukeRow>;
-  winLoss: Record<string, { wins: number; losses: number }>;
+  winLoss: Record<string, { wins: number; losses: number; absences?: number }>;
   notableMovements: Notable[];
   wrestlerCount: number;
   promotedCount: number;
