@@ -164,10 +164,10 @@ function BanzukeTab({ rows, prevRankObj, winLoss, notableMovements, wrestlerCoun
 
       {/* East / West Headers */}
       <div className="grid grid-cols-2 gap-4 mb-5">
-        <div className="py-2.5 text-center text-white font-bold tracking-[0.15em] rounded-lg text-sm" style={{ background: "#c0392b" }}>
+        <div className="font-sumo py-2.5 text-center text-white font-bold tracking-[0.15em] rounded-lg text-sm" style={{ background: "#c0392b" }}>
           東 <span className="font-normal opacity-70 ml-2 text-xs tracking-widest">EAST</span>
         </div>
-        <div className="py-2.5 text-center text-white font-bold tracking-[0.15em] rounded-lg text-sm" style={{ background: "#1e3768" }}>
+        <div className="font-sumo py-2.5 text-center text-white font-bold tracking-[0.15em] rounded-lg text-sm" style={{ background: "#1e3768" }}>
           <span className="font-normal opacity-70 mr-2 text-xs tracking-widest">WEST</span> 西
         </div>
       </div>

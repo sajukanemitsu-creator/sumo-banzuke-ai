@@ -104,7 +104,7 @@ export default async function HomePage({
     <div>
       {/* ─── Hero ─── */}
       <div className="text-center pt-10 pb-6 px-4">
-        <h1 className="font-sumo text-5xl font-bold tracking-[0.15em] mb-3">AI番付予測</h1>
+        <h1 className="text-5xl font-bold tracking-[0.15em] mb-3">AI番付予測</h1>
         <div className="flex items-center justify-center gap-4 mb-4">
           <div className="h-px w-20 bg-[#c0392b]" />
           <span className="text-[10px] tracking-[0.5em] text-[#c0392b]/70 uppercase">

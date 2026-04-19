@@ -43,13 +43,13 @@ export default function RootLayout({
             <nav className="flex gap-1">
               <a
                 href="/"
-                className="font-sumo px-4 py-1.5 text-sm tracking-wider rounded-lg text-[#1a1008]/70 hover:text-[#c0392b] hover:bg-[#c0392b]/8 transition-all font-medium"
+                className="px-4 py-1.5 text-sm tracking-wider rounded-lg text-[#1a1008]/70 hover:text-[#c0392b] hover:bg-[#c0392b]/8 transition-all font-medium"
               >
                 AI番付予測
               </a>
               <a
                 href="/banzuke"
-                className="font-sumo px-4 py-1.5 text-sm tracking-wider rounded-lg text-[#1a1008]/70 hover:text-[#c0392b] hover:bg-[#c0392b]/8 transition-all font-medium"
+                className="px-4 py-1.5 text-sm tracking-wider rounded-lg text-[#1a1008]/70 hover:text-[#c0392b] hover:bg-[#c0392b]/8 transition-all font-medium"
               >
                 番付照会
               </a>
