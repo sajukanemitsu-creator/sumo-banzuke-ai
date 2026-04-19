@@ -38,18 +38,18 @@ export default function RootLayout({
           <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
             <a href="/" className="flex items-center gap-2">
               <span className="text-[#c0392b] text-xl leading-none">◉</span>
-              <span className="font-bold tracking-wider text-base">相撲AI</span>
+              <span className="font-sumo font-bold tracking-wider text-base">相撲AI</span>
             </a>
             <nav className="flex gap-1">
               <a
                 href="/"
-                className="px-4 py-1.5 text-sm tracking-wider rounded-lg text-[#1a1008]/70 hover:text-[#c0392b] hover:bg-[#c0392b]/8 transition-all font-medium"
+                className="font-sumo px-4 py-1.5 text-sm tracking-wider rounded-lg text-[#1a1008]/70 hover:text-[#c0392b] hover:bg-[#c0392b]/8 transition-all font-medium"
               >
                 AI番付予測
               </a>
               <a
                 href="/banzuke"
-                className="px-4 py-1.5 text-sm tracking-wider rounded-lg text-[#1a1008]/70 hover:text-[#c0392b] hover:bg-[#c0392b]/8 transition-all font-medium"
+                className="font-sumo px-4 py-1.5 text-sm tracking-wider rounded-lg text-[#1a1008]/70 hover:text-[#c0392b] hover:bg-[#c0392b]/8 transition-all font-medium"
               >
                 番付照会
               </a>

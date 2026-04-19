@@ -1,8 +1,25 @@
 @import "tailwindcss";
 
+/* ─── 藍原相撲字フォント ─────────────────────────────────────────────────────
+   フォントファイルの配置: public/fonts/AiharaSumouji.ttf
+   入手先: https://booth.pm/ja/items/6798384 （pixivアカウント必要・無料）
+   ─────────────────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'SumoFont';
+  src: url('/fonts/AiharaSumouji.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@utility font-sumo {
+  font-family: 'SumoFont', 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif;
+}
+
 :root {
   --background: #f5efe0;
   --foreground: #1a1008;
+  --font-sumo: 'SumoFont', 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
 }
 
 body {

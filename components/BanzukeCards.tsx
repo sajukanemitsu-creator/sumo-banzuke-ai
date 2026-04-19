@@ -77,7 +77,7 @@ function EastCard({
     >
       <Link
         href={`/rikishi/${encodeURIComponent(row.rikishi_name)}`}
-        className="text-base font-bold tracking-wider hover:text-[#c0392b] transition-colors block leading-tight mb-1"
+        className="font-sumo text-base font-bold tracking-wider hover:text-[#c0392b] transition-colors block leading-tight mb-1"
       >
         {displayName(row)}
       </Link>
@@ -152,7 +152,7 @@ function WestCard({
     >
       <Link
         href={`/rikishi/${encodeURIComponent(row.rikishi_name)}`}
-        className="text-base font-bold tracking-wider hover:text-[#1e3768] transition-colors block text-right leading-tight mb-1"
+        className="font-sumo text-base font-bold tracking-wider hover:text-[#1e3768] transition-colors block text-right leading-tight mb-1"
       >
         {displayName(row)}
       </Link>
@@ -229,7 +229,7 @@ export default function BanzukeCards({ rows, prevRankObj, winLoss }: Props) {
             {/* ランクグループ区切り */}
             <div className="flex items-center gap-4 mb-3">
               <div className="flex-1 h-px bg-stone-300" />
-              <span className="text-sm font-bold tracking-[0.4em] text-[#1a1008]/50 px-2">
+              <span className="font-sumo text-sm font-bold tracking-[0.4em] text-[#1a1008]/50 px-2">
                 {(RANK_JA[rank] ?? rank).split("").join("　")}
               </span>
               <div className="flex-1 h-px bg-stone-300" />
@@ -261,7 +261,7 @@ export default function BanzukeCards({ rows, prevRankObj, winLoss }: Props) {
                     {/* 中央: 番付名・枚数（縦書き） */}
                     <div className="flex items-center justify-center">
                       <span
-                        className="text-[11px] font-medium text-[#1a1008]/45 tracking-widest select-none"
+                        className="font-sumo text-[11px] font-medium text-[#1a1008]/45 tracking-widest select-none"
                         style={{ writingMode: "vertical-rl" }}
                       >
                         {rankCenterLabel(centerRank, centerRankNum)}

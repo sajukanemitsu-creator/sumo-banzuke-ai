@@ -155,7 +155,7 @@ function BanzukeTab({ rows, prevRankObj, winLoss, notableMovements, wrestlerCoun
       {/* 番付表 Title */}
       <div className="text-center mb-6">
         <div className="inline-block border-2 border-[#c0392b]/30 px-10 py-4">
-          <h2 className="text-2xl tracking-[0.5em] font-bold">番 付 表</h2>
+          <h2 className="font-sumo text-2xl tracking-[0.5em] font-bold">番 付 表</h2>
         </div>
         <p className="text-xs text-[#1a1008]/40 mt-2 tracking-wider">
           {era} {monthName} 予測番付 ／ 前場所成績から算出
